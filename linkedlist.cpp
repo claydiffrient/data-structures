@@ -2,11 +2,12 @@
 #include <cstdlib>
 using namespace std;
 
+template<class T>
 class Node
 {
    private:
-      int mValue;
-      Node* mNext;
+      T mValue;
+      Node<T>* mNext;
    public:
       /*************************************************************************
       * Default constructor.
@@ -14,24 +15,24 @@ class Node
       Node()
       {
          mValue = 0;
-         mNext = new Node();
+         mNext = new Node<T>();
       }
       ~Node()
       {
 
       }
 
-      int getValue() {return mValue;}
-      void setValue(int value) {mValue = value;}
-      Node getNext() {return mNext;}
+      T getValue() {return mValue;}
+      void setValue(T value) {mValue = value;}
+      Node<T> getNext() {return mNext;}
       void setNext(Node* next) {mNext = next;}
 };
 
 int main(int argc, char const *argv[])
 {
-   Node aNode();
-   aNode->setValue(1);
-   aNode->setNext(new Node());
+   Node<int> aNode;
+   aNode.setValue(1);
+   aNode.setNext(new Node<int>());
 
    return 0;
 }
