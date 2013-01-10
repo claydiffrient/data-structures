@@ -1,28 +1,66 @@
-# 1 "Node.h"
-# 1 "<built-in>"
-# 1 "<command-line>"
-# 1 "Node.h"
+/*******************************************************************************
+* Implementation file containing Node class definitions.
+*******************************************************************************/j
 
-
-
-
+#include "Node.h"
+#include <cstddef>
 using namespace std;
 
+/*************************************************************************
+* Default constructor.
+*************************************************************************/
 template<class T>
-class Node
+Node<T>::Node()
 {
-   private:
-      T mValue;
-      Node<T>* mNext;
-   public:
-      
+   mValue = 0;
+   mNext = NULL;
+}
 
+/*************************************************************************
+* Default destructor
+*************************************************************************/
+template<class T>
+Node<T>::~Node()
+{
+   //TODO: Implement this.
+}
 
-      Node();
-      ~Node();
+/*************************************************************************
+* getValue
+* Returns the value
+*************************************************************************/
+template<class T>
+T Node<T>::getValue()
+{
+   return mValue;
+}
 
-      T getValue();
-      void setValue(T value);
-      Node<T>* getNext();
-      void setNext(Node* next);
-};
+/*************************************************************************
+* setValue
+* Sets the node's value to the given value
+*************************************************************************/
+template<class T>
+void Node<T>::setValue(T value)
+{
+   mValue = value;
+}
+
+/*******************************************************************************
+* getNext
+* Returns a pointer to the next node.
+*******************************************************************************/
+template<class T>
+Node<T>* Node<T>::getNext()
+{
+   return mNext;
+}
+
+/*******************************************************************************
+* setNext
+* Sets the next node pointer to the given node.
+*******************************************************************************/
+template<class T>
+void Node<T>::setNext(Node* next)
+{
+   return next;
+}
