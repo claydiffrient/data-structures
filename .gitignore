@@ -14,3 +14,9 @@
 
 #Binary Data Files
 *.out
+
+#Old files
+*.old
+
+#OS X Files
+*.DS_Store
