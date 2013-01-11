@@ -7,3 +7,12 @@ Demonstrations of data structures in C++
 
 Currently including:  
   - Linked Lists  
+
+Coming Soon:
+  - Doubly Linked List
+  - Queue
+  - Deque
+  - Binary Tree
+  - Binary Search Tree
+  - Red Black Tree
+  - Huffman Tree
