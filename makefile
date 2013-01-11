@@ -12,7 +12,6 @@ CXXFLAGS = -Wall
 #Variables for this portion
 DIR = ./linkedlist/c++
 
-#Create object files for everything.
 Main: Node.o LinkedList.o $(DIR)/main.cpp
 	$(CXX) $(CXXFLAGS) -o Main $(DIR)/main.cpp Node.o LinkedList.o
 
