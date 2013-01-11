@@ -2,7 +2,7 @@
 * Header file for the LinkedList Class Declaration
 *******************************************************************************/
 
-##ifndef LINKED_LIST_T
+#ifndef LINKED_LIST_T
 #define LINKED_LIST_T
 
 #include "Node.cpp"

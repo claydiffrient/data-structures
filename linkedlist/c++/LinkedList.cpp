@@ -3,6 +3,7 @@
 *******************************************************************************/
 
 #include "LinkedList.h"
+#include <iostream>
 using namespace std;
 
 /*************************************************************************
@@ -11,7 +12,7 @@ using namespace std;
 template<class T>
 LinkedList<T>::LinkedList()
 {
-   mHead = NULL;
+   mHead = new Node<T>();
    mSize = 0;
 }
 
@@ -43,6 +44,7 @@ Node<T>* LinkedList<T>::getHead()
 {
    return mHead;
 }
+
 /*************************************************************************
 * setSize
 * Sets the size to the given value.
@@ -52,6 +54,7 @@ void LinkedList<T>::setSize(int size)
 {
    mSize = size;
 }
+
 /*************************************************************************
 * getSize
 * Returns the size of the linked list.
@@ -61,30 +64,85 @@ int LinkedList<T>::getSize()
 {
    return mSize;
 }
+
 /*************************************************************************
 * insertAtEnd
 * Inserts the given node reference at the end of the list.
 *************************************************************************/
-void insertAtEnd(Node<T>* node)
+template<class T>
+void LinkedList<T>::insertAtEnd(Node<T>* node)
 {
-   Node<T>* last = traverse();
-   last.setNext(node);
+   if (mSize == 0)
+   {
+
+      mHead->setNext(node);
+   }
+   else
+   {
+      Node<T>* last = traverse();
+      if (last != NULL)
+      {
+         last->setNext(node);
+         mSize++;
+      }
+      else
+      {
+         cerr << "An error occurred when inserting at the end." << endl;
+      }
+   }
 }
+
 /*************************************************************************
 * insertAtBeginning
 * Inserts the given node reference at the beginning of the list.
 *************************************************************************/
-void insertAtBeginning(Node<T>* node);
+template<class T>
+void LinkedList<T>::insertAtBeginning(Node<T>* node)
+{
+   Node<T>* temp = mHead->getNext();
+   if (temp != NULL)
+   {
+      node->setNext(temp);
+      mHead->setNext(node);
+      mSize++;
+   }
+   else
+   {
+      mHead->setNext(node);
+   }
+}
+
 /*************************************************************************
 * removeFirst
 * Removes the first element from the list.
 *************************************************************************/
-void removeFirst();
+template<class T>
+void LinkedList<T>::removeFirst()
+{
+   Node<T>* first = mHead->getNext();
+   if (first != NULL)
+   {
+      Node<T>* newFirst = first->getNext();
+      mHead->setNext(newFirst);
+      delete first;
+      mSize--;
+   }
+   else
+   {
+      cerr << "There are no nodes in the list.";
+   }
+}
 /*************************************************************************
 * removeLast
 * Removes the last element from the list.
 *************************************************************************/
-void removeLast();
+template<class T>
+void LinkedList<T>::removeLast()
+{
+   Node<T>* last = traverse();
+   delete last;
+   mSize--;
+}
 /*************************************************************************
 * traverse
 * Returns a pointer to the last node of the list.

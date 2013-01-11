@@ -62,5 +62,5 @@ Node<T>* Node<T>::getNext()
 template<class T>
 void Node<T>::setNext(Node* next)
 {
-   return next;
+   mNext = next;
 }
