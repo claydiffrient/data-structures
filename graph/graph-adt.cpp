@@ -6,10 +6,12 @@
 #include<iostream>
 #include<cstdlib>
 #include<vector>
-#include<stdexcept>
 using namespace std;
 
-
+/*******************************************************************************
+* Node
+* Provides an implementation of nodes within a graph.
+*******************************************************************************/
 class Node
 {
    public:
@@ -24,6 +26,10 @@ class Node
       Node* mNext;
 };
 
+/*******************************************************************************
+* Graph
+* Provides an simple implementation of a directed graph.
+*******************************************************************************/
 class Graph
 {
    public:
@@ -79,7 +85,16 @@ bool Graph::isEmpty()
 *******************************************************************************/
 bool Graph::insertNewNode(int pValue)
 {
+   for (int i = 0; i < mAdjacencyList->size(); i++)
+   {
+      if (mAdjacencyList->at(i)->getValue() == pValue)
+      {
+         cerr << "Node already exists." << endl;
+         return false;
+      }
+   }
    mAdjacencyList->push_back(new Node(pValue));
+   return true;
 }
 
 /*******************************************************************************
@@ -97,20 +112,30 @@ bool Graph::insertDirectedEdge(int pFirstNodeValue, int pSecondNodeValue)
 
    Node* startNode;
    Node* endNode;
-   try
+
+   bool firstNodeFound = false;
+   bool secondNodeFound = false;
+
+   for (int i = 0; i < mAdjacencyList->size(); i++)
    {
-      startNode = mAdjacencyList->at(pFirstNodeValue - 1);
+      if (mAdjacencyList->at(i)->getValue() == pFirstNodeValue)
+      {
+         firstNodeFound = true;
+         startNode = mAdjacencyList->at(i);
+      }
+      if (mAdjacencyList->at(i)->getValue() == pSecondNodeValue)
+      {
+         secondNodeFound = true;
+         endNode = mAdjacencyList->at(i);
+      }
    }
-   catch (const out_of_range& outOfRange)
+
+   if (!firstNodeFound)
    {
       cerr << "The first node doesn't exist.\n";
       return false;
    }
-   try
-   {
-      endNode = mAdjacencyList->at(pSecondNodeValue - 1);
-   }
-   catch (const out_of_range& outOfRange)
+   if (!secondNodeFound)
    {
       cerr << "The second node doesn't exist.\n";
       return false;
@@ -144,7 +169,7 @@ void Graph::displayGraph()
    {
       for (int i = 0; i < mAdjacencyList->size(); i++)
       {
-         cout << "Node " << i + 1 << " -> ";
+         cout << "Node " << mAdjacencyList->at(i)->getValue() << " -> ";
          Node* myNode;
          myNode = mAdjacencyList->at(i)->getNext();
          while (myNode != NULL)
@@ -192,6 +217,7 @@ int main()
    myGraph.insertNewNode(4);
    myGraph.insertNewNode(5);
    myGraph.insertNewNode(6);
+   myGraph.insertNewNode(8);
    myGraph.insertDirectedEdge(1, 2);
    myGraph.insertDirectedEdge(1, 4);
    myGraph.insertDirectedEdge(1, 5);
@@ -202,6 +228,8 @@ int main()
    myGraph.insertDirectedEdge(4, 3);
    myGraph.insertDirectedEdge(6, 2);
    myGraph.insertDirectedEdge(6, 3);
+   myGraph.insertDirectedEdge(6, 3);
+   myGraph.insertDirectedEdge(8, 9);
    myGraph.displayGraph();
    return 0;
 }
