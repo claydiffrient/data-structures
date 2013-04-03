@@ -18,21 +18,27 @@ class Edge
 {
    public:
       Edge(int pDestination, int pWeight);
-      Edge(int pValue);
       int getWeight() {return mWeight;}
       int getDestination() {return mDestination;}
-      Edge* getNext() { return mNext;}
-      void setNext(Edge* pNext) {mNext = pNext;}
-      int getValue() {return mValue;}
-      void setValue(int pValue) {mValue = pValue;}
    private:
-      int mValue;
       int mDestination;
       int mWeight;
-      Edge* mNext;
 };
 
-
+/*******************************************************************************
+* Node
+* Implmentation of a Node.
+*******************************************************************************/
+class Node
+{
+   public:
+      Node(int pValue);
+      int getValue() {return mValue;}
+      vector<Edge*>* getEdges() {return mConnections;}
+   private:
+      vector<Edge*>* mConnections;
+      int mValue;
+};
 
 /*******************************************************************************
 * Graph
@@ -45,22 +51,21 @@ class Graph
       Graph(ifstream& pGraphData);
       ~Graph();
       bool isEmpty();
-      Edge* insertNode(int pValue);
+      Node* insertNode(int pValue);
       bool insertEdge(int pFirstNodeValue, int pSecondNodeValue, int pWeight);
       string findShortestPath(int pStartNode, int pEndNode);
       void displayGraph();
    private:
-      vector<Edge*>* mAdjacencyList;
+      vector<Node*>* mNodes;
 };
 
 /*******************************************************************************
-* Starter Edge Constructor
+* Node Constructor
 *******************************************************************************/
-Edge::Edge(int pValue)
+Node::Node(int pValue)
 {
-   mDestination = -1;
-   mWeight = -1;
    mValue = pValue;
+   mConnections = new vector<Edge*>();
 }
 
 /*******************************************************************************
@@ -70,7 +75,6 @@ Edge::Edge(int pDestination, int pWeight)
 {
    mDestination = pDestination;
    mWeight = pWeight;
-   mValue = -1;
 }
 
 /*******************************************************************************
@@ -79,7 +83,7 @@ Edge::Edge(int pDestination, int pWeight)
 *******************************************************************************/
 Graph::Graph()
 {
-   mAdjacencyList = new vector<Edge*>();
+   mNodes = new vector<Node*>();
 }
 
 /*******************************************************************************
@@ -88,7 +92,7 @@ Graph::Graph()
 *******************************************************************************/
 Graph::Graph(ifstream& pGraphData)
 {
-   mAdjacencyList = new vector<Edge*>();
+   mNodes = new vector<Node*>();
    string curString;
    int startNode;
    int destinationNode;
@@ -99,8 +103,6 @@ Graph::Graph(ifstream& pGraphData)
       curStringStream >> startNode;
       while (curStringStream >> destinationNode >> weight)
       {
-         cout << "Start: " << startNode << " End: " << destinationNode
-              << " Weight: " << weight << endl;
          insertEdge(startNode, destinationNode, weight);
       }
    }
@@ -130,7 +132,7 @@ Graph::~Graph()
 *******************************************************************************/
 bool Graph::isEmpty()
 {
-   return mAdjacencyList->empty();
+   return mNodes->empty();
 }
 
 /*******************************************************************************
@@ -139,23 +141,20 @@ bool Graph::isEmpty()
 * Returns a pointer to the node if it exists, if it doesn't it creates a node
 * and returns a pointer to it.
 *******************************************************************************/
-Edge* Graph::insertNode(int pValue)
+Node* Graph::insertNode(int pValue)
 {
-   vector<Edge*>::iterator it;
-   for (it = mAdjacencyList->begin(); it != mAdjacencyList->end(); it++)
+   vector<Node*>::iterator it;
+   for (it = mNodes->begin(); it != mNodes->end(); it++)
    {
-      //cout << "Trying to find " << pValue << ", checking " << (*it)->getValue() << endl;
       if ((*it)->getValue() == pValue)
       {
-         cout << "Found " << pValue << endl;
          return *it;
       }
    }
-   Edge* newEdge;
-   newEdge = new Edge(pValue);
-   cout << "Not found. Inserting new node " << pValue << endl;
-   mAdjacencyList->push_back(newEdge);
-   return newEdge;
+   Node* newNode;
+   newNode = new Node(pValue);
+   mNodes->push_back(newNode);
+   return newNode;
 }
 
 /*******************************************************************************
@@ -172,32 +171,26 @@ bool Graph::insertEdge(int pFirstNodeValue, int pSecondNodeValue,
       return false;
    }
 
-   Edge* startNode;
-   Edge* endNode;
+   Node* startNode;
+   Node* endNode;
 
    startNode = insertNode(pFirstNodeValue);
    endNode = insertNode(pSecondNodeValue);
 
-   while (startNode->getNext() != NULL)
+   vector<Edge*>::iterator startNodeIter;
+   vector<Edge*>* startEdges;
+   startEdges = startNode->getEdges();
+
+   for (startNodeIter = startEdges->begin(); startNodeIter != startEdges->end(); startNodeIter++)
    {
-      startNode = startNode->getNext();
-      if (startNode->getDestination() == pSecondNodeValue)
+      if ((*startNodeIter)->getDestination() == pSecondNodeValue)
       {
          cerr << "The edge from " << pFirstNodeValue
               << " to " << pSecondNodeValue << " already exists.\n";
          return false;
       }
    }
-   cerr << "Inserting edge from " << pFirstNodeValue
-              << " to " << pSecondNodeValue << " with weight " << pWeight << "\n\n";
-   startNode->setNext(new Edge(pSecondNodeValue, pWeight));
-
-/*   while (endNode->getNext() != NULL)
-   {
-      endNode = endNode->getNext();
-   }*/
-
-   //endNode->setNext(new Edge(pFirstNodeValue, pWeight));
+   startEdges->push_back(new Edge(pSecondNodeValue, pWeight));
    return true;
 }
 
@@ -213,21 +206,17 @@ void Graph::displayGraph()
    }
    else
    {
-      vector<Edge*>::iterator it;
-      for (it = mAdjacencyList->begin(); it != mAdjacencyList->end(); it++)
+      vector<Node*>::iterator nodeIt;
+      vector<Edge*>::iterator edgeIt;
+      for (nodeIt = mNodes->begin(); nodeIt != mNodes->end(); nodeIt++)
       {
-         cout << "Node " << (*it)->getValue() << " -> ";
-         Edge* myNode;
-         myNode = (*it)->getNext();
-         while (myNode != NULL)
+         cout << "Node " << (*nodeIt)->getValue() << " -> ";
+         vector<Edge*>* edges;
+         edges = (*nodeIt)->getEdges();
+         for (edgeIt = edges->begin(); edgeIt != edges->end(); edgeIt++)
          {
-            cout << "[" << myNode->getDestination() << ", "
-                 << myNode->getWeight() << "]";
-            myNode = myNode->getNext();
-            if (myNode != NULL)
-            {
-               cout << ", ";
-            }
+            cout << "[" << (*edgeIt)->getDestination() << ", "
+                 << (*edgeIt)->getWeight() << "] ";
          }
          cout << endl;
       }
